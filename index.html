@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#F59E0B">
+    <title>Gepreklicious - Order Ayam Geprek</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="manifest" href="#" id="manifest-placeholder">
+    <style>
+        :root {
+            --primary-color: #F59E0B;
+            --secondary-color: #D97706;
+            --dark-color: #92400E;
+            --light-color: #FEF3C7;
+        }
+
+        body {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: white !important;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--dark-color) 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .menu-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            padding: 1.5rem;
+            background: var(--light-color);
+            text-align: center;
+        }
+
+        .price-tag {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 0.5rem 0;
+        }
+
+        .btn-add-cart {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .btn-add-cart:hover {
+            background: var(--secondary-color);
+            transform: scale(1.05);
+        }
+
+        .cart-floating {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .cart-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            font-size: 1.5rem;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .cart-btn:hover {
+            background: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+        }
+
+        .cart-item {
+            background: var(--light-color);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .qr-code {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .section-title {
+            color: var(--dark-color);
+            font-weight: bold;
+            margin: 2rem 0 1.5rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .level-pedas {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .level-pedas button {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            border: 2px solid var(--primary-color);
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .level-pedas button.active {
+            background: var(--primary-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-fire"></i> Gepreklicious by Gladiola Budi Asmara - 062102004
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 mb-3">Selamat Datang!</h1>
+            <p class="lead">Pedasnya Bikin Ketagihan, Rasanya Bikin Bahagia!</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Menu Makanan -->
+        <h2 class="section-title"><i class="bi bi-egg-fried"></i> Menu Makanan</h2>
+        <div class="row" id="foodMenu"></div>
+
+        <!-- Menu Minuman -->
+        <h2 class="section-title"><i class="bi bi-cup-straw"></i> Menu Minuman</h2>
+        <div class="row" id="drinkMenu"></div>
+    </div>
+
+    <!-- Floating Cart Button -->
+    <div class="cart-floating">
+        <button class="cart-btn" data-bs-toggle="modal" data-bs-target="#cartModal">
+            <i class="bi bi-cart3"></i>
+            <span class="cart-badge" id="cartBadge">0</span>
+        </button>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="modal fade" id="cartModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-cart3"></i> Keranjang Belanja</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="cartItems"></div>
+                    <div class="text-end mt-3">
+                        <h4>Total: <span class="price-tag" id="totalPrice">Rp 0</span></h4>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-add-cart" onclick="proceedToCheckout()">
+                        <i class="bi bi-bag-check"></i> Pesan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-check"></i> Data Pengiriman</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="checkoutForm">
+                        <div class="mb-3">
+                            <label class="form-label">Nama Lengkap</label>
+                            <input type="text" class="form-control" id="customerName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Alamat Pengiriman</label>
+                            <textarea class="form-control" id="customerAddress" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nomor Telepon</label>
+                            <input type="tel" class="form-control" id="customerPhone" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-add-cart" onclick="confirmOrder()">
+                        <i class="bi bi-check-circle"></i> Order Sekarang
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-credit-card"></i> Pembayaran</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="qr-code">
+                        <div style="font-size: 100px; color: var(--primary-color);">
+                            <i class="bi bi-qr-code"></i>
+                        </div>
+                        <h5 class="mt-3">Transfer ke:</h5>
+                        <p class="mb-1"><strong>BCA</strong></p>
+                        <p class="mb-1"><strong>123456</strong></p>
+                        <p class="mb-3">a.n. Gladiola Budi Asmara</p>
+                        <h4 class="price-tag" id="finalTotal">Rp 0</h4>
+                    </div>
+                    <div class="alert alert-warning mt-3">
+                        <i class="bi bi-info-circle"></i> Silakan transfer sesuai nominal dan konfirmasi pembayaran Anda
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-add-cart" onclick="finishPayment()">
+                        <i class="bi bi-check-all"></i> Bayar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Data Menu
+        const menuData = {
+            food: [
+                {
+                    id: 1,
+                    name: "Luluh sama sambel",
+                    desc: "Ayam geprek klasik sambel bawang pedes mantap",
+                    price: 10000,
+                    icon: "bi-fire"
+                },
+                {
+                    id: 2,
+                    name: "Pedasnya nyaingin mantan",
+                    desc: "Ayam Geprek sambel trasi",
+                    price: 10000,
+                    icon: "bi-fire"
+                },
+                {
+                    id: 3,
+                    name: "Udah Baik Masi Ditolak",
+                    desc: "Ayam Geprek saus asam manis",
+                    price: 13000,
+                    icon: "bi-heart-break"
+                },
+                {
+                    id: 4,
+                    name: "Kamu Sih Baik Tapi Nyakitin",
+                    desc: "Ayam Geprek dibakar dengan level pedas sesukamu",
+                    price: 15000,
+                    icon: "bi-fire",
+                    hasLevel: true
+                }
+            ],
+            drink: [
+                {
+                    id: 5,
+                    name: "Teh Manis",
+                    desc: "Manisnya pas, nggak kayak omongan dia",
+                    price: 3000,
+                    icon: "bi-cup-hot",
+                    hasTemp: true
+                },
+                {
+                    id: 6,
+                    name: "Jeruk",
+                    desc: "Segernya nyegerin, tapi perih di ujungnya",
+                    price: 5000,
+                    icon: "bi-cup-straw",
+                    hasTemp: true
+                },
+                {
+                    id: 7,
+                    name: "Matcha Es",
+                    desc: "Manis, lembut tapi entah mau di bawa kemana",
+                    price: 10000,
+                    icon: "bi-cup-straw"
+                }
+            ]
+        };
+
+        let cart = [];
+
+        // Load cart from localStorage
+        function loadCart() {
+            const saved = localStorage.getItem('gepreklicious_cart');
+            if (saved) {
+                cart = JSON.parse(saved);
+                updateCartDisplay();
+            }
+        }
+
+        // Save cart to localStorage
+        function saveCart() {
+            localStorage.setItem('gepreklicious_cart', JSON.stringify(cart));
+        }
+
+        // Render Menu
+        function renderMenu() {
+            const foodContainer = document.getElementById('foodMenu');
+            const drinkContainer = document.getElementById('drinkMenu');
+
+            menuData.food.forEach(item => {
+                foodContainer.innerHTML += createMenuCard(item);
+            });
+
+            menuData.drink.forEach(item => {
+                drinkContainer.innerHTML += createMenuCard(item);
+            });
+        }
+
+        function createMenuCard(item) {
+            const tempOptions = item.hasTemp ? `
+                <div class="level-pedas mb-2">
+                    <button type="button" class="temp-btn active" data-temp="Es">Es</button>
+                    <button type="button" class="temp-btn" data-temp="Panas">Panas</button>
+                </div>
+            ` : '';
+
+            const levelOptions = item.hasLevel ? `
+                <div class="level-pedas mb-2">
+                    <button type="button" class="level-btn active" data-level="1">Level 1</button>
+                    <button type="button" class="level-btn" data-level="2">Level 2</button>
+                    <button type="button" class="level-btn" data-level="3">Level 3</button>
+                    <button type="button" class="level-btn" data-level="4">Level 4</button>
+                    <button type="button" class="level-btn" data-level="5">Level 5</button>
+                </div>
+            ` : '';
+
+            return `
+                <div class="col-md-6 fade-in">
+                    <div class="menu-card">
+                        <div class="menu-icon">
+                            <i class="${item.icon}"></i>
+                        </div>
+                        <div class="p-3">
+                            <h5 class="fw-bold">${item.name}</h5>
+                            <p class="text-muted">${item.desc}</p>
+                            ${tempOptions}
+                            ${levelOptions}
+                            <div class="mb-2">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="toggleNotes(${item.id})">
+                                    <i class="bi bi-pencil"></i> Tambah Keterangan
+                                </button>
+                            </div>
+                            <textarea class="form-control mb-2 d-none" id="notes-${item.id}" placeholder="Catatan khusus..." rows="2"></textarea>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="price-tag">Rp ${item.price.toLocaleString('id-ID')}</span>
+                                <button class="btn btn-add-cart" onclick="addToCart(${item.id})">
+                                    <i class="bi bi-plus-circle"></i> Tambah
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Toggle Notes
+        function toggleNotes(id) {
+            const notesEl = document.getElementById(`notes-${id}`);
+            notesEl.classList.toggle('d-none');
+        }
+
+        // Add to Cart
+        function addToCart(id) {
+            const allMenus = [...menuData.food, ...menuData.drink];
+            const item = allMenus.find(m => m.id === id);
+            
+            let temp = null;
+            let level = null;
+            const notes = document.getElementById(`notes-${id}`).value;
+
+            if (item.hasTemp) {
+                const activeTemp = document.querySelector(`#foodMenu .temp-btn.active, #drinkMenu .temp-btn.active`);
+                temp = activeTemp ? activeTemp.dataset.temp : 'Es';
+            }
+
+            if (item.hasLevel) {
+                const activeLevel = document.querySelector(`#foodMenu .level-btn.active`);
+                level = activeLevel ? activeLevel.dataset.level : '1';
+            }
+
+            const cartItem = {
+                ...item,
+                cartId: Date.now(),
+                temp,
+                level,
+                notes
+            };
+
+            cart.push(cartItem);
+            saveCart();
+            updateCartDisplay();
+            
+            // Reset notes
+            document.getElementById(`notes-${id}`).value = '';
+            document.getElementById(`notes-${id}`).classList.add('d-none');
+
+            // Show success animation
+            const btn = event.target.closest('button');
+            btn.innerHTML = '<i class="bi bi-check-circle"></i> Ditambahkan';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="bi bi-plus-circle"></i> Tambah';
+            }, 1000);
+        }
+
+        // Update Cart Display
+        function updateCartDisplay() {
+            const badge = document.getElementById('cartBadge');
+            const cartItems = document.getElementById('cartItems');
+            const totalPrice = document.getElementById('totalPrice');
+
+            badge.textContent = cart.length;
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p class="text-center text-muted">Keranjang masih kosong</p>';
+                totalPrice.textContent = 'Rp 0';
+                return;
+            }
+
+            let total = 0;
+            cartItems.innerHTML = cart.map((item, index) => {
+                total += item.price;
+                const tempText = item.temp ? ` (${item.temp})` : '';
+                const levelText = item.level ? ` - Level ${item.level}` : '';
+                const notesText = item.notes ? `<br><small class="text-muted"><i class="bi bi-chat-left-text"></i> ${item.notes}</small>` : '';
+                
+                return `
+                    <div class="cart-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">${item.name}${tempText}${levelText}</h6>
+                                <p class="mb-0 text-muted small">${item.desc}${notesText}</p>
+                            </div>
+                            <div class="text-end">
+                                <p class="mb-1 fw-bold">Rp ${item.price.toLocaleString('id-ID')}</p>
+                                <button class="btn btn-sm btn-danger" onclick="removeFromCart(${index})">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            totalPrice.textContent = `Rp ${total.toLocaleString('id-ID')}`;
+        }
+
+        // Remove from Cart
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            saveCart();
+            updateCartDisplay();
+        }
+
+        // Proceed to Checkout
+        function proceedToCheckout() {
+            if (cart.length === 0) {
+                alert('Keranjang masih kosong!');
+                return;
+            }
+            const cartModal = bootstrap.Modal.getInstance(document.getElementById('cartModal'));
+            cartModal.hide();
+            const checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal'));
+            checkoutModal.show();
+        }
+
+        // Confirm Order
+        function confirmOrder() {
+            const name = document.getElementById('customerName').value;
+            const address = document.getElementById('customerAddress').value;
+            const phone = document.getElementById('customerPhone').value;
+
+            if (!name || !address || !phone) {
+                alert('Mohon lengkapi semua data!');
+                return;
+            }
+
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('finalTotal').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+
+            const checkoutModal = bootstrap.Modal.getInstance(document.getElementById('checkoutModal'));
+            checkoutModal.hide();
+            const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+            paymentModal.show();
+        }
+
+        // Finish Payment
+        function finishPayment() {
+            alert('Terima kasih! Pesanan Anda akan segera diproses. Harap transfer sesuai nominal dan konfirmasi pembayaran.');
+            cart = [];
+            saveCart();
+            updateCartDisplay();
+            
+            // Reset form
+            document.getElementById('checkoutForm').reset();
+            
+            const paymentModal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+            paymentModal.hide();
+        }
+
+        // Event Delegation for Level and Temp buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('level-btn')) {
+                e.target.parentElement.querySelectorAll('.level-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                e.target.classList.add('active');
+            }
+            if (e.target.classList.contains('temp-btn')) {
+                e.target.parentElement.querySelectorAll('.temp-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                e.target.classList.add('active');
+            }
+        });
+
+        // Initialize
+        renderMenu();
+        loadCart();
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `
+                    const CACHE_NAME = 'gepreklicious-v1';
+                    self.addEventListener('install', (e) => {
+                        e.waitUntil(
+                            caches.open(CACHE_NAME).then(cache => {
+                                return cache.addAll(['/']);
+                            })
+                        );
+                    });
+                    self.addEventListener('fetch', (e) => {
+                        e.respondWith(
+                            caches.match(e.request).then(response => {
+                                return response || fetch(e.request);
+                            })
+                        );
+                    });
+                `;
+                
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swUrl).then(registration => {
+                    console.log('SW registered:', registration);
+                }).catch(err => {
+                    console.log('SW registration failed:', err);
+                });
+            });
+        }
+
+        // Manifest
+        const manifestData = {
+            "name": "Gepreklicious",
+            "short_name": "Gepreklicious",
+            "start_url": "/",
+            "display": "standalone",
+            "background_color": "#FEF3C7",
+            "theme_color": "#F59E0B",
+            "description": "Order Ayam Geprek dengan nama unik dan rasa yang bikin ketagihan",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23F59E0B'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='white'>🔥</text></svg>",
+                    "sizes": "512x512",
+                    "type": "image/svg+xml"
+                }
+            ]
+        };
+
+        const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
+        const manifestUrl = URL.createObjectURL(manifestBlob);
+        document.getElementById('manifest-placeholder').setAttribute('href', manifestUrl);
+    </script>
+</body>
+</html>
